@@ -128,8 +128,8 @@ def mutate(orig_file):
             pass
 
         # more strategy
-
-    print mutate_data
+    
+    
     fout.write(mutate_data)
 
     fin.close()
