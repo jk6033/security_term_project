@@ -105,6 +105,7 @@ def mutate(orig_file):
         strategy = random.randrange(0, 4)
 
         if strategy == 0:                                   # random byte mutation
+            print 'mutation strategy 0.'
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                         # mutate size 1-4

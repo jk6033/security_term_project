@@ -58,8 +58,7 @@ class TestcaseMinimizer(object):
         cmd[idx] = testcase
 
         with open(os.devnull, "wb") as devnull:
-            print "----------"
-            print ' '.join(cmd)
+            # print ' '.join(cmd)
             # os.system(' '.join(cmd))
             proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=devnull, stderr=devnull)
             # proc.communicate(stdin)
