@@ -114,7 +114,7 @@ def mutate(orig_file):
             temp += mutate_data[offset_to_mutate+rand_size:]
             
             mutate_data = temp
-            print mutate_data
+            print bin(ord(mutate_data))
 
         elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
