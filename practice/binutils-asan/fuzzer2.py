@@ -8,7 +8,7 @@ import time
 
 import minimizer
 
-afl_path = 'path to afl'
+afl_path = '/home/crybaby26/security_term_project/practice/afl-2.52b' # 'path to afl'
 
 prog_name = ''
 prog_args = ''
@@ -227,7 +227,5 @@ if __name__ == '__main__':
             if result == -1:
                 crash_handler()
 
-            print afl_path
-            print output_dir
             if minimizer_.check_testcase(cur_file):
                 add_interesting(cur_file)
