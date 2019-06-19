@@ -227,5 +227,7 @@ if __name__ == '__main__':
             if result == -1:
                 crash_handler()
 
+            print afl_path
+            print output_dir
             if minimizer_.check_testcase(cur_file):
                 add_interesting(cur_file)
