@@ -119,7 +119,7 @@ def mutate(orig_file):
             print 'mutation strategy 1.'
 
             for i in mutate_data:
-                print hex(ord(i))
+                print bin(ord(i))
                 
             pass
 
