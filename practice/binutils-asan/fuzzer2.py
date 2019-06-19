@@ -94,7 +94,6 @@ def mutate(orig_file):
     orig_data = fin.read()
     
     in_size = len(orig_data)                                # input size
-    print in_size
 
     mutation_count = random.randrange(1, 100)               # mutate n times
 
@@ -115,6 +114,7 @@ def mutate(orig_file):
             temp += mutate_data[offset_to_mutate+rand_size:]
             
             mutate_data = temp
+            print mutate_data
 
         elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
