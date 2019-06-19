@@ -125,7 +125,7 @@ def mutate(orig_file):
                 for j in binary_string[2:]:
                     if j: x += "0"
                     else: x += "1"
-                temp += chr(int(x))
+                temp += chr(int(x, 2))
 
             mutate_data = temp
 
