@@ -105,7 +105,7 @@ def mutate(orig_file):
         strategy = random.randrange(0, 7)
 
         if strategy == 0:                                   # random byte mutation
-            # print 'mutation strategy 0.'
+            print 'mutation strategy 0.'
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                      # mutate size 1-4
@@ -120,7 +120,12 @@ def mutate(orig_file):
             temp = ""
 
             for i in mutate_data:
-                temp += chr(int(int(bin(ord(i)), 2) ^ 0b11111111))
+                binary_string = bin(ord(i))
+                x = "0b"
+                for j in binary_string[2:]:
+                    if j: x += "0"
+                    else: x += "1"
+                temp += chr(int(x))
 
             mutate_data = temp
 
@@ -142,7 +147,7 @@ def mutate(orig_file):
             pass
 
         elif strategy == 6:                          
-            print 'mutation strategy 6.'                    # block insertion
+            print 'mutation strategy 6.'                    # block deletion
             pass
 
         print mutate_data
