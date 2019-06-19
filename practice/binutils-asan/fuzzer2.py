@@ -99,7 +99,7 @@ def mutate(orig_file):
 
     mutate_data = orig_data
 
-    for j in range(mutation_count):  
+    for j in range(mutation_count):                         
         offset_to_mutate = random.randrange(0, in_size)     # offset to mutate
         rand_size = random.randrange(1, 16)
         strategy = random.randrange(0, 7)
@@ -114,11 +114,15 @@ def mutate(orig_file):
             temp += mutate_data[offset_to_mutate+rand_size:]
             
             mutate_data = temp
-            print bin(ord(mutate_data))
 
         elif strategy == 1:                                 # bit flipping
-            print 'mutation strategy 1.'
-            pass         
+            # print 'mutation strategy 1.'
+            temp = ""
+
+            for i in mutate_data:
+                temp += hex(ord(i)) & 0xfffff #20 bit representation, since chr is valid from 0 to 0x10FFFF
+
+            mutate_data = temp
 
         elif strategy == 2:
             print 'mutation strategy 2.'                    # byte flipping    
@@ -140,6 +144,7 @@ def mutate(orig_file):
             print 'mutation strategy 6.'                    # block insertion
             pass
 
+        print mutate_data
         # more strategy
     
 
