@@ -132,7 +132,7 @@ def mutate(orig_file):
             temp = ""
             for m in mutate_data:
                 flipped = ""
-                byte = extend_bit(m)
+                byte = extend_bit(bin(ord(m)))
                 flip_size = random.randrange(1, 5)
                 for f in range(flip_size):
                     if int(byte[f+2]): flipped += str(0)
@@ -152,7 +152,7 @@ def mutate(orig_file):
             temp = ""
             for m in mutate_data:
                 flipped = ""
-                byte = extend_bit(m)
+                byte = extend_bit(bin(ord(m)))
                 flip_size = 8
                 for f in range(flip_size):
                     if int(byte[f+2]): flipped += str(0)
@@ -169,7 +169,8 @@ def mutate(orig_file):
             to trigger more complex conditions in a deterministic fashion, 
             the third stage employed by afl attempts to subtly increment or decrement existing integer values in the input file; 
             this is done with a stepover of one byte. The experimentally chosen range for the operation is -35 to +35; past these bounds, fuzzing yields drop dramatically. 
-            In particular, the popular option of sequentially trying every single value for each byte (equivalent to arithmetics in the range of -128 to +127) helps very little and is skipped by afl.
+            In particular, the popular option of sequentially trying every single value for each byte 
+            (equivalent to arithmetics in the range of -128 to +127) helps very little and is skipped by afl.
             
             When it comes to the implementation, the stage consists of three separate operations. 
             First, the fuzzer attempts to perform subtraction and addition on individual bytes. 
@@ -178,6 +179,8 @@ def mutate(orig_file):
             (otherwise, the operation would simply duplicate the results of the 8-bit pass). 
             The final stage follows the same logic, but for 32-bit integers.
             '''
+            operand = random.randrange(-35, 36)
+            # for m in mutation_data:
             
             pass
 
