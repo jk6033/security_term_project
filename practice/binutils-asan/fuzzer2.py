@@ -102,7 +102,7 @@ def mutate(orig_file):
     for j in range(mutation_count):  
         offset_to_mutate = random.randrange(0, in_size)         # offset to mutate
         rand_size = random.randrange(1, 16)
-        strategy = random.randrange(0, 4)
+        strategy = random.randrange(0, 1)
 
         if strategy == 0:                                   # random byte mutation
             print 'mutation strategy 0.'
@@ -129,7 +129,7 @@ def mutate(orig_file):
 
         # more strategy
     
-    
+
     fout.write(mutate_data)
 
     fin.close()
