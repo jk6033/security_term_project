@@ -118,15 +118,12 @@ def mutate(orig_file):
         elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
             temp = ""
-
             for i in mutate_data:
-                binary_string = bin(ord(i))
-                x = "0b"
-                for j in binary_string[2:]:
-                    if j: x += "0"
-                    else: x += "1"
-                temp += chr(int(x, 2))
-
+                s1 = bin(ord(i))
+                s2 = '0b11111111'
+                l = ['0b'] + [str(ord(a) ^ ord(b)) for a,b in zip(s1,s2)]
+                temp += ''.join(l)
+            
             mutate_data = temp
 
         elif strategy == 2:
