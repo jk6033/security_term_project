@@ -129,6 +129,7 @@ def mutate(orig_file):
 
         # more strategy
 
+    print mutate_data
     fout.write(mutate_data)
 
     fin.close()
