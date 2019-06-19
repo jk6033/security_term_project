@@ -82,6 +82,13 @@ def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = N
 
     #return p.returncode
 
+# utility function for mutation
+def extend_bit(bitString):
+    temp = bitString[2:]
+    extend = 8 - len(temp)
+    result = "0b" + str(0)*extend + temp
+    return result
+
 def mutate(orig_file):
     global cur_file
 
@@ -109,7 +116,7 @@ def mutate(orig_file):
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                      # mutate size 1-4
-                temp += chr(random.randrange(0, 4))
+                temp += chr(random.randrange(0, 1114112))
 
             temp += mutate_data[offset_to_mutate+rand_size:]
             
@@ -117,34 +124,78 @@ def mutate(orig_file):
 
         elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
+            '''
+            Walking bit flips: 
+            the first and most rudimentary strategy employed by afl involves performing sequential, ordered bit flips. 
+            The stepover is always one bit; the number of bits flipped in a row varies from one to four. 
+            '''
             temp = ""
-            for i in mutate_data:
-                s1 = bin(ord(i))
-                s2 = '0b11111111'
-                l = ['0b'] + [str(ord(a) ^ ord(b)) for a,b in zip(s1,s2)]
-                temp += chr(int(''.join(l), 2))
+            for m in mutate_data:
+                flipped = ""
+                byte = extend_bit(m)
+                flip_size = random.randrange(1, 5)
+                for f in range(flip_size):
+                    if int(byte[f+2]): flipped += str(0)
+                    else: flipped += str(1)
+                byte = byte[:2] + flipped + byte[2+flip_size:]
+                temp += chr(int(byte, 2))
             
             mutate_data = temp
 
         elif strategy == 2:
             print 'mutation strategy 2.'                    # byte flipping    
-
-            pass
+            '''
+            Walking byte flips: 
+            a natural extension of walking bit flip approach, 
+            this method relies on 8-bit wide bitflips with a constant stepover of one byte. 
+            '''
+            temp = ""
+            for m in mutate_data:
+                flipped = ""
+                byte = extend_bit(m)
+                flip_size = 8
+                for f in range(flip_size):
+                    if int(byte[f+2]): flipped += str(0)
+                    else: flipped += str(1)
+                byte = byte[:2] + flipped + byte[2+flip_size:]
+                temp += chr(int(byte, 2))
+            
+            mutate_data = temp
 
         elif strategy == 3:                          
             print 'mutation strategy 3.'                    # arithmetic inc/dec
+            '''
+            Simple arithmetics: 
+            to trigger more complex conditions in a deterministic fashion, 
+            the third stage employed by afl attempts to subtly increment or decrement existing integer values in the input file; 
+            this is done with a stepover of one byte. The experimentally chosen range for the operation is -35 to +35; past these bounds, fuzzing yields drop dramatically. 
+            In particular, the popular option of sequentially trying every single value for each byte (equivalent to arithmetics in the range of -128 to +127) helps very little and is skipped by afl.
+            
+            When it comes to the implementation, the stage consists of three separate operations. 
+            First, the fuzzer attempts to perform subtraction and addition on individual bytes. 
+            With this out of the way, the second pass involves looking at 16-bit values, using both endians 
+            - but incrementing or decrementing them only if the operation would have also affected the most significant byte 
+            (otherwise, the operation would simply duplicate the results of the 8-bit pass). 
+            The final stage follows the same logic, but for 32-bit integers.
+            '''
+            
             pass
 
         elif strategy == 4:                          
             print 'mutation strategy 4.'                    # interesting value
+            '''
+            Known integers: 
+            the last deterministic approach employed by afl relies on a hardcoded set of integers chosen for their demonstrably elevated likelihood of triggering edge conditions in typical code (e.g., -1, 256, 1024, MAX_INT-1, MAX_INT). 
+            The fuzzer uses a stepover of one byte to sequentially overwrite existing data in the input file with one of the approximately two dozen "interesting" values, using both endians (the writes are 8-, 16-, and 32-bit wide).
+            '''
             pass
 
         elif strategy == 5:                          
-            print 'mutation strategy 5.'                    # block insertion
+            print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
             pass
-
+ 
         elif strategy == 6:                          
-            print 'mutation strategy 6.'                    # block deletion
+            print 'mutation strategy 6.'                    # block deletion : 1 block = 16 bytes
             pass
 
         print mutate_data
