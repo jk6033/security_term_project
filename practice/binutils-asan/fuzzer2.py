@@ -93,38 +93,51 @@ def mutate(orig_file):
 
     orig_data = fin.read()
     
-    in_size = len(orig_data)                        # input size
+    in_size = len(orig_data)                                # input size
+    print in_size
 
-    mutation_count = random.randrange(1, 100)            # mutate n times
+    mutation_count = random.randrange(1, 100)               # mutate n times
 
     mutate_data = orig_data
 
     for j in range(mutation_count):  
-        offset_to_mutate = random.randrange(0, in_size)         # offset to mutate
+        offset_to_mutate = random.randrange(0, in_size)     # offset to mutate
         rand_size = random.randrange(1, 16)
-        strategy = random.randrange(0, 1)
+        strategy = random.randrange(0, 7)
 
         if strategy == 0:                                   # random byte mutation
             # print 'mutation strategy 0.'
             temp = mutate_data[:offset_to_mutate]
         
-            for i in range(rand_size):                         # mutate size 1-4
+            for i in range(rand_size):                      # mutate size 1-4
                 temp += chr(random.randrange(0, 4))
 
             temp += mutate_data[offset_to_mutate+rand_size:]
             
             mutate_data = temp
 
-        elif strategy == 1:                                   
+        elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
             pass         
 
         elif strategy == 2:
-            print 'mutation strategy 2.'                       
+            print 'mutation strategy 2.'                    # byte flipping    
             pass
 
         elif strategy == 3:                          
-            print 'mutation strategy 3.'
+            print 'mutation strategy 3.'                    # arithmetic inc/dec
+            pass
+
+        elif strategy == 4:                          
+            print 'mutation strategy 4.'                    # interesting value
+            pass
+
+        elif strategy == 5:                          
+            print 'mutation strategy 5.'                    # block insertion
+            pass
+
+        elif strategy == 6:                          
+            print 'mutation strategy 6.'                    # block insertion
             pass
 
         # more strategy
