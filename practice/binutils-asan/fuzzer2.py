@@ -120,7 +120,7 @@ def mutate(orig_file):
             temp = ""
 
             for i in mutate_data:
-                temp += hex(ord(i)) & 0xfffff #20 bit representation, since chr is valid from 0 to 0x10FFFF
+                temp += int(hex(ord(i))) & 0xfffff #20 bit representation, since chr is valid from 0 to 0x10FFFF
 
             mutate_data = temp
 
