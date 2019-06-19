@@ -117,11 +117,12 @@ def mutate(orig_file):
 
         elif strategy == 1:                                 # bit flipping
             print 'mutation strategy 1.'
+            temp = ""
 
             for i in mutate_data:
-                print bin(ord(i))
-                
-            pass
+                temp += chr(int(int(bin(ord(i)), 2) ^ 0b11111111))
+
+            mutate_data = temp
 
         elif strategy == 2:
             print 'mutation strategy 2.'                    # byte flipping    
