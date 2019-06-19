@@ -116,19 +116,16 @@ def mutate(orig_file):
             mutate_data = temp
 
         elif strategy == 1:                                 # bit flipping
-            # print 'mutation strategy 1.'
-            temp = ""
+            print 'mutation strategy 1.'
 
             for i in mutate_data:
-                hexstring = hex(ord(i))
-                extra_0 = len("0xfffff") - len(hexstring)
-                hexstring = hexstring[0:2] + str(0)*extra_0 + hexstring[2:]
-                temp += chr(int(hexstring, 16) & 0xfffff) #20 bit representation, since chr is valid from 0 to 0x10FFFF
-
-            mutate_data = temp
+                print hex(ord(i))
+                
+            pass
 
         elif strategy == 2:
             print 'mutation strategy 2.'                    # byte flipping    
+
             pass
 
         elif strategy == 3:                          
