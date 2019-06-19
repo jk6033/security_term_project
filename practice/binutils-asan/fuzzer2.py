@@ -116,7 +116,7 @@ def mutate(orig_file):
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                      # mutate size 1-4
-                temp += chr(random.randrange(0, 257))
+                temp += chr(random.randrange(0, 256))
 
             temp += mutate_data[offset_to_mutate+rand_size:]
             
