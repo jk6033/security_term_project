@@ -122,7 +122,7 @@ def mutate(orig_file):
                 s1 = bin(ord(i))
                 s2 = '0b11111111'
                 l = ['0b'] + [str(ord(a) ^ ord(b)) for a,b in zip(s1,s2)]
-                temp += ''.join(l)
+                temp += chr(int(''.join(l), 2))
             
             mutate_data = temp
 
