@@ -121,7 +121,7 @@ def mutate(orig_file):
 
             for i in mutate_data:
                 hexstring = hex(ord(i))
-                extra_0 = len(0xfffff) - len(hexstring)
+                extra_0 = len("0xfffff") - len(hexstring)
                 hexstring = hexstring[0:2] + str(0)*extra_0 + hexstring[2:]
                 temp += int(hexstring) & 0xfffff #20 bit representation, since chr is valid from 0 to 0x10FFFF
 
