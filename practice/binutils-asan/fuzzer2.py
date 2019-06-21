@@ -43,8 +43,10 @@ def crash_handler():
         crash_id += 1
 
 def remove_duplicate_crash():
-    for i in os.listdir(crash_dir[:-1]):
-        print i
+    for i in os.listdir(crash_dir):
+        path = os.path.join(crash_dir, i)
+        print path
+        output = check_output(["llvm-symbolizer-5.0 < ", path])
 
 def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = None):
     '''
