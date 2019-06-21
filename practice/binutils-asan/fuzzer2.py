@@ -46,7 +46,7 @@ def remove_duplicate_crash():
     for i in os.listdir(crash_dir):
         path = os.path.join(crash_dir, i)
         print path
-        output = check_output(["llvm-symbolizer-5.0 < ", path])
+        output = check_output("llvm-symbolizer-5.0 < " + path)
 
 def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = None):
     '''
@@ -430,7 +430,7 @@ if __name__ == '__main__':
     while True:
         s = queue[random.randrange(0, len(queue))]
 
-        print 'cur_input: ' + s
+        # print 'cur_input: ' + s
 
         for i in range(100):           # mutate 100 times for a test case
 
