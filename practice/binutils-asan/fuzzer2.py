@@ -43,7 +43,7 @@ def crash_handler():
         crash_id += 1
 
 def remove_duplicate_crash():
-    for i in crash_dir:
+    for i in os.listdir(crash_dir[:-1]):
         print i
 
 def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = None):
