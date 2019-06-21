@@ -33,12 +33,12 @@ def is_new_crash(crash):
     print 'triage crashes.'
     global cur_file
     # cmd = "llvm-symbolizer-5.0 < " +  cur_file # ./fuzzer-output/crashes/ + 'id_' + str(crash_id)
-    temp = check_output(["llvm-symbolizer-5.0", "<", cur_file])
+    temp = check_output(["llvm-symbolizer-5.0 <", cur_file])
 
     for i in crash_dir:
         print '\n'
-        print ["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ]
-        c = check_output(["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ])
+        print ["llvm-symbolizer-5.0 <", crash_dir + "/" + i ]
+        c = check_output(["llvm-symbolizer-5.0 <", crash_dir + "/" + i ])
         print c
         print temp
    
