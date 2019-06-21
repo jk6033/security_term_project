@@ -48,7 +48,7 @@ def crash_handler():
         
         cmd = "llvm-symbolizer-5.0 < ./fuzzer-output/crashes/" + 'id_' + str(crash_id)
         print cmd
-        temp = Popen(cmd)
+        temp = os.system(cmd)
         print temp
         
         print 'new crash found! id: ' + str(crash_id)
