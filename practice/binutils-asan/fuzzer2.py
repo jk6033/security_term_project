@@ -317,7 +317,7 @@ def mutate(orig_file):
 
         elif strategy == 3:                          
             # print 'mutation strategy 3.'                    # arithmetic inc/dec
-            mutate_data = simple_arithmatic(mutate_data)
+            # mutate_data = simple_arithmatic(mutate_data)
 
         elif strategy == 4:                          
             # print 'mutation strategy 4.'                    # interesting value
