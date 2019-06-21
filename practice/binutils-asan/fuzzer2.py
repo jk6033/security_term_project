@@ -31,7 +31,9 @@ interest_list = [] # interesting values example
 
 def is_new_crash(crash):
     print 'triage crashes.'
-
+    print crash
+    # for i in crash_dir:
+    #     if 
     return True
 
 def crash_handler():
