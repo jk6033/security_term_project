@@ -309,12 +309,12 @@ def mutate(orig_file):
 
         elif strategy == 1:                                 # bit flipping
             # print 'mutation strategy 1.'
-            # mutate_data = bit_flip(mutate_data)
-            pass
+            mutate_data = bit_flip(mutate_data)
+            # pass
         elif strategy == 2:
             # print 'mutation strategy 2.'                    # byte flipping    
-            # mutate_data = byte_flip(mutate_data)
-            pass
+            mutate_data = byte_flip(mutate_data)
+            # pass
         elif strategy == 3:                          
             # print 'mutation strategy 3.'                    # arithmetic inc/dec
             # mutate_data = simple_arithmatic(mutate_data)
