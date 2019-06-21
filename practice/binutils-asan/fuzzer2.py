@@ -1,6 +1,6 @@
 import os
 from signal import alarm, signal, SIGALRM, SIGKILL
-from subprocess import PIPE, Popen
+from subprocess import PIPE, Popen, check_output
 import sys
 from shutil import copyfile, rmtree
 import random
@@ -33,12 +33,12 @@ def is_new_crash(crash):
     print 'triage crashes.'
     global cur_file
     # cmd = "llvm-symbolizer-5.0 < " +  cur_file # ./fuzzer-output/crashes/ + 'id_' + str(crash_id)
-    temp = subprocess.check_output(["llvm-symbolizer-5.0", "<", cur_file])
+    temp = check_output(["llvm-symbolizer-5.0", "<", cur_file])
 
     for i in crash_dir:
         print '\n'
         print ["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ]
-        c = subprocess.check_output(["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ])
+        c = check_output(["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ])
         print c
         print temp
    
