@@ -31,9 +31,12 @@ interest_list = [] # interesting values example
 
 def is_new_crash(crash):
     print 'triage crashes.'
-    print crash
+    
     # for i in crash_dir:
-    #     if 
+    #     text = "./fuzzer-output/crashes/" + i
+    #     temp = subprocess.Popen(["llvm-symbolizer-5.0", "<", text])
+    #     print temp
+        
     return True
 
 def crash_handler():
@@ -42,6 +45,11 @@ def crash_handler():
 
     if is_new_crash(cur_file):
         copyfile(cur_file, os.path.join(crash_dir, 'id_'+str(crash_id)))
+        
+        text = "./fuzzer-output/crashes/" + 'id_' + str(crash_id)
+        temp = subprocess.Popen(["llvm-symbolizer-5.0", "<", text])
+        print temp
+        
         print 'new crash found! id: ' + str(crash_id)
         crash_id += 1
 
