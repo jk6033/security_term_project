@@ -309,12 +309,12 @@ def mutate(orig_file):
 
         elif strategy == 1:                                 # bit flipping
             # print 'mutation strategy 1.'
-            mutate_data = bit_flip(mutate_data)
-
+            # mutate_data = bit_flip(mutate_data)
+            pass
         elif strategy == 2:
             # print 'mutation strategy 2.'                    # byte flipping    
-            mutate_data = byte_flip(mutate_data)
-
+            # mutate_data = byte_flip(mutate_data)
+            pass
         elif strategy == 3:                          
             # print 'mutation strategy 3.'                    # arithmetic inc/dec
             # mutate_data = simple_arithmatic(mutate_data)
@@ -328,19 +328,19 @@ def mutate(orig_file):
 
         elif strategy == 5:                          
             # print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
-            temp = mutate_data[:offset_to_mutate]
+            # temp = mutate_data[:offset_to_mutate]
             # generate random block
-            for i in range(4):
-                temp += chr(random.randrange(0, 256))
-            temp += mutate_data[offset_to_mutate:]
-            mutate_data = temp
- 
+            # for i in range(4):
+            #     temp += chr(random.randrange(0, 256))
+            # temp += mutate_data[offset_to_mutate:]
+            # mutate_data = temp
+            pass
         elif strategy == 6:                          
             # print 'mutation strategy 6.'                    # block deletion : 1 block = 16 bytes
-            temp = mutate_data[:offset_to_mutate-4]
-            temp += mutate_data[offset_to_mutate:]
-            mutate_data = temp
-            
+            # temp = mutate_data[:offset_to_mutate-4]
+            # temp += mutate_data[offset_to_mutate:]
+            # mutate_data = temp
+            pass
         # more strategy
     
     fout.write(mutate_data)
