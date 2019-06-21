@@ -228,15 +228,15 @@ def simple_arithmatic(mutate_data):
         mutate_byte = read_16bit(mutate_data)
         for m in mutate_byte:
             if len(m) != 18: 
-                l.append(m)
+                l.append(bin(raw))
                 continue
             # calculation
             raw = int(m, 2) + random.randrange(-35, 36)
             if raw > 65535: raw = 65535
             elif raw < 0: raw = 0
             # incrementing or decrementing them only if the operation would have also affected the most significant byte 
-            if int(m, 2) >= 2**15 and raw < 2**15: l.append(raw)
-            elif int(m, 2) < 2**15 and raw >= 2**15: l.append(raw)
+            if int(m, 2) >= 2**15 and raw < 2**15: l.append(bin(raw))
+            elif int(m, 2) < 2**15 and raw >= 2**15: l.append(bin(raw))
             else: l.append(bin(m))
         
         result = write_16bit(l)
@@ -249,15 +249,15 @@ def simple_arithmatic(mutate_data):
         mutate_byte = read_32bit(mutate_data)
         for m in mutate_byte:
             if len(m) != 34: 
-                l.append(m)
+                l.append(bin(m))
                 continue
             # calculation
             raw = int(m, 2) + random.randrange(-35, 36)
             if raw > 4294967295: raw = 4294967295
             elif raw < 0: raw = 0
             # incrementing or decrementing them only if the operation would have also affected the most significant byte 
-            if   int(m, 2) >= 2**31 and raw < 2**31: l.append(raw)
-            elif int(m, 2) <  2**31 and raw >=2**31: l.append(raw)
+            if   int(m, 2) >= 2**31 and raw < 2**31: l.append(bin(raw))
+            elif int(m, 2) <  2**31 and raw >=2**31: l.append(bin(raw))
             else: l.append(bin(m))
         
         result = write_32bit(l)
