@@ -46,8 +46,9 @@ def crash_handler():
     if is_new_crash(cur_file):
         copyfile(cur_file, os.path.join(crash_dir, 'id_'+str(crash_id)))
         
-        text = "./fuzzer-output/crashes/" + 'id_' + str(crash_id)
-        temp = Popen("llvm-symbolizer-5.0 < " + text)
+        cmd = "llvm-symbolizer-5.0 < ./fuzzer-output/crashes/" + 'id_' + str(crash_id)
+        print cmd
+        temp = Popen(cmd)
         print temp
         
         print 'new crash found! id: ' + str(crash_id)
