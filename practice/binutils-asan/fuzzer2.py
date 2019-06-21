@@ -237,7 +237,7 @@ def simple_arithmatic(mutate_data):
             # incrementing or decrementing them only if the operation would have also affected the most significant byte 
             if int(m, 2) >= 2**15 and raw < 2**15: l.append(raw)
             elif int(m, 2) < 2**15 and raw >= 2**15: l.append(raw)
-            else: l.append(m)
+            else: l.append(bin(m))
         
         result = write_16bit(l)
     mutate_data = result
@@ -258,7 +258,7 @@ def simple_arithmatic(mutate_data):
             # incrementing or decrementing them only if the operation would have also affected the most significant byte 
             if   int(m, 2) >= 2**31 and raw < 2**31: l.append(raw)
             elif int(m, 2) <  2**31 and raw >=2**31: l.append(raw)
-            else: l.append(m)
+            else: l.append(bin(m))
         
         result = write_32bit(l)
     
