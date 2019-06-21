@@ -31,20 +31,6 @@ interest_list = [] # interesting values example
 
 def is_new_crash(crash):
     print 'triage crashes.'
-    global cur_file
-    # cmd = "llvm-symbolizer-5.0 < " +  cur_file # ./fuzzer-output/crashes/ + 'id_' + str(crash_id)
-    temp = check_output(["llvm-symbolizer-5.0 <", cur_file])
-
-    for i in crash_dir:
-        print '\n'
-        print ["llvm-symbolizer-5.0 <", crash_dir + "/" + i ]
-        c = check_output(["llvm-symbolizer-5.0 <", crash_dir + "/" + i ])
-        print c
-        print temp
-   
-        if temp == c:
-            print "duplicate!"
-            return False
     return True
 
 def crash_handler():
@@ -53,14 +39,12 @@ def crash_handler():
 
     if is_new_crash(cur_file):
         copyfile(cur_file, os.path.join(crash_dir, 'id_'+str(crash_id)))
-        
-        cmd = "llvm-symbolizer-5.0 < ./fuzzer-output/crashes/" + 'id_' + str(crash_id)
-        print cmd
-        temp = os.system(cmd)
-        print temp
-        
         print 'new crash found! id: ' + str(crash_id)
         crash_id += 1
+
+def remove_duplicate_crash():
+    for i in crash_dir:
+        print i
 
 def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = None):
     '''
@@ -461,3 +445,5 @@ if __name__ == '__main__':
 
             if minimizer_.check_testcase(cur_file):
                 add_interesting(cur_file)
+    
+    remove_duplicate_crash()
