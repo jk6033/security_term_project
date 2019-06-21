@@ -442,8 +442,8 @@ if __name__ == '__main__':
 
             if result == -1:
                 crash_handler()
+                remove_duplicate_crash()
 
             if minimizer_.check_testcase(cur_file):
                 add_interesting(cur_file)
     
-    remove_duplicate_crash()
