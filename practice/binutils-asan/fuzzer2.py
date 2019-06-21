@@ -38,6 +38,8 @@ def is_new_crash(crash):
     for i in crash_dir:
         c = "llvm-symbolizer-5.0 < " +  crash_dir + "/" + i 
         print c
+        print temp
+        print os.system(c)
         if temp == os.system(c):
 
             print "duplicate!"
