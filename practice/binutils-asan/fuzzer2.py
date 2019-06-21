@@ -32,16 +32,17 @@ interest_list = [] # interesting values example
 def is_new_crash(crash):
     print 'triage crashes.'
     global cur_file
-    cmd = "llvm-symbolizer-5.0 < " +  cur_file # ./fuzzer-output/crashes/ + 'id_' + str(crash_id)
-    temp = os.system(cmd)    
-    
+    # cmd = "llvm-symbolizer-5.0 < " +  cur_file # ./fuzzer-output/crashes/ + 'id_' + str(crash_id)
+    temp = subprocess.check_output(["llvm-symbolizer-5.0", "<", cur_file])
+
     for i in crash_dir:
-        c = "llvm-symbolizer-5.0 < " +  crash_dir + "/" + i 
+        print '\n'
+        print ["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ]
+        c = subprocess.check_output(["llvm-symbolizer-5.0", "<", crash_dir + "/" + i ])
         print c
         print temp
-        print os.system(c)
-        if temp == os.system(c):
-
+   
+        if temp == c:
             print "duplicate!"
             return False
     return True
