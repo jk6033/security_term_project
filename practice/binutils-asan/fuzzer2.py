@@ -86,8 +86,193 @@ def run(args, cwd = None, shell = False, kill_tree = True, timeout = -1, env = N
 def extend_bit(bitString):
     temp = bitString[2:]
     extend = 8 - len(temp)
+    assert extend >= 0
     result = "0b" + str(0)*extend + temp
     return result
+
+def read_16bit(mutate_data):
+    length = len(mutate_data)
+    result = []
+    for i in range(len(mutate_data)):
+        if i>=(length//2)*2:
+            # read remaining 8 bit
+            temp = extend_bit(bin(ord(mutate_data[i])))
+            result.append(temp)
+        elif i%2 == 0:
+            # read 16 bit
+            first_byte = extend_bit(bin(ord(mutate_data[i])))[2:]
+            second_byte= extend_bit(bin(ord(mutate_data[i+1])))[2:]
+            temp = "0b" + first_byte + second_byte
+            result.append(temp)
+        else: 
+            continue 
+    return result
+
+def write_16bit(mutate_byte):
+    result = ""
+    for m in mutate_byte:
+        if len(m) == 10: 
+            result += chr(int(m, 2))
+        elif len(m) == 18: 
+            first_byte = m[:10]
+            second_byte = '0b' + m[10:] 
+            result += chr(int(first_byte, 2))
+            result += chr(int(second_byte, 2))
+    return result
+
+def read_32bit(mutate_data):
+    length = len(mutate_data)
+    result = []
+    for i in range(len(mutate_data)):
+        if i>=(length//4)*4:
+            # read remaining 8 bit
+            temp = extend_bit(bin(ord(mutate_data[i])))
+            result.append(temp)
+        elif i%4 == 0:
+            # read 16 bit
+            first_byte = extend_bit(bin(ord(mutate_data[i])))[2:]
+            second_byte= extend_bit(bin(ord(mutate_data[i+1])))[2:]
+            thrid_byte = extend_bit(bin(ord(mutate_data[i+2])))[2:]
+            fourth_byte= extend_bit(bin(ord(mutate_data[i+3])))[2:]
+            temp = "0b" + first_byte + second_byte + thrid_byte + fourth_byte
+            result.append(temp)
+        else: 
+            continue 
+    return result
+
+def write_32bit(mutate_byte):
+    result = ""
+    for m in mutate_byte:
+        if len(m) == 10: 
+            result += chr(int(m, 2))
+        elif len(m) == 18+16: 
+            first_byte  = m[:10]
+            second_byte = '0b' + m[10:18] 
+            thrid_byte  = '0b' + m[18:26] 
+            fourth_byte = '0b' + m[26:] 
+
+            result += chr(int(first_byte , 2))
+            result += chr(int(second_byte, 2))
+            result += chr(int(thrid_byte , 2))
+            result += chr(int(fourth_byte, 2))
+    return result
+
+'''
+Walking bit flips: 
+the first and most rudimentary strategy employed by afl involves performing sequential, ordered bit flips. 
+The stepover is always one bit; the number of bits flipped in a row varies from one to four. 
+'''
+def bit_flip(mutate_data):
+    result = ""
+    for m in mutate_data:
+        flipped = ""
+        byte = extend_bit(bin(ord(m)))
+        flip_size = random.randrange(1, 5)
+        for f in range(flip_size):
+            if int(byte[f+2]): flipped += str(0)
+            else: flipped += str(1)
+        byte = byte[:2] + flipped + byte[2+flip_size:]
+        result += chr(int(byte, 2))
+    return result
+'''
+Walking byte flips: 
+a natural extension of walking bit flip approach, 
+this method relies on 8-bit wide bitflips with a constant stepover of one byte. 
+'''
+def byte_flip(mutate_data):
+    result = ""
+    for m in mutate_data:
+        flipped = ""
+        byte = extend_bit(bin(ord(m)))
+        flip_size = 8
+        for f in range(flip_size):
+            if int(byte[f+2]): flipped += str(0)
+            else: flipped += str(1)
+        byte = byte[:2] + flipped + byte[2+flip_size:]
+        result += chr(int(byte, 2))
+    return result
+
+'''
+Simple arithmetics: 
+to trigger more complex conditions in a deterministic fashion, 
+the third stage employed by afl attempts to subtly increment or decrement existing integer values in the input file; 
+this is done with a stepover of one byte. The experimentally chosen range for the operation is -35 to +35; past these bounds, fuzzing yields drop dramatically. 
+In particular, the popular option of sequentially trying every single value for each byte 
+(equivalent to arithmetics in the range of -128 to +127) helps very little and is skipped by afl.
+            
+When it comes to the implementation, the stage consists of three separate operations. 
+First, the fuzzer attempts to perform subtraction and addition on individual bytes. 
+With this out of the way, the second pass involves looking at 16-bit values, using both endians 
+- but incrementing or decrementing them only if the operation would have also affected the most significant byte 
+(otherwise, the operation would simply duplicate the results of the 8-bit pass). 
+The final stage follows the same logic, but for 32-bit integers.
+'''
+def simple_arithmatic(mutate_data):
+    length = len(mutate_data)
+    # first pass (8-bit)
+    # First, the fuzzer attempts to perform subtraction and addition on individual bytes. 
+    result = ""
+    for m in mutate_data:
+        raw = ord(m) + random.randrange(-35, 36)
+        if raw > 255: raw = 255
+        elif raw < 0: raw = 0
+        result += chr(raw)
+    mutate_data = result
+
+    # second pass (16-bit)
+    # the second pass involves looking at 16-bit values, using both endians 
+    # - but incrementing or decrementing them only if the operation would have also affected the most significant byte 
+    result = ""
+    if length >= 2: 
+        l = []
+        mutate_byte = read_16bit(mutate_data)
+        for m in mutate_byte:
+            if len(m) != 18: 
+                l.append(m)
+                continue
+            # calculation
+            raw = int(m, 2) + random.randrange(-35, 36)
+            if raw > 65535: raw = 65535
+            elif raw < 0: raw = 0
+            # incrementing or decrementing them only if the operation would have also affected the most significant byte 
+            if int(m, 2) >= 2**15 and raw < 2**15: l.append(raw)
+            elif int(m, 2) < 2**15 and raw >= 2**15: l.append(raw)
+            else: l.append(m)
+        
+        result = write_16bit(l)
+    mutate_data = result
+    
+    # third pass (32-bit)
+    result = ""
+    if length >= 4:
+        l = []
+        mutate_byte = read_32bit(mutate_data)
+        for m in mutate_byte:
+            if len(m) != 34: 
+                l.append(m)
+                continue
+            # calculation
+            raw = int(m, 2) + random.randrange(-35, 36)
+            if raw > 4294967295: raw = 4294967295
+            elif raw < 0: raw = 0
+            # incrementing or decrementing them only if the operation would have also affected the most significant byte 
+            if   int(m, 2) >= 2**31 and raw < 2**31: l.append(raw)
+            elif int(m, 2) <  2**31 and raw >=2**31: l.append(raw)
+            else: l.append(m)
+        
+        result = write_32bit(l)
+    
+    mutate_data = result
+    return mutate_data
+
+'''
+Known integers: 
+the last deterministic approach employed by afl relies on a hardcoded set of integers chosen for their demonstrably elevated likelihood of triggering edge conditions in typical code.
+The fuzzer uses a stepover of one byte to sequentially overwrite existing data in the input file with one of the approximately two dozen "interesting" values, using both endians.
+'''
+def interesting_value(mutate_data):
+    
+    pass
 
 def mutate(orig_file):
     global cur_file
@@ -112,7 +297,7 @@ def mutate(orig_file):
         strategy = random.randrange(0, 7)
 
         if strategy == 0:                                   # random byte mutation
-            print 'mutation strategy 0.'
+            # print 'mutation strategy 0.'
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                      # mutate size 1-4
@@ -123,88 +308,41 @@ def mutate(orig_file):
             mutate_data = temp
 
         elif strategy == 1:                                 # bit flipping
-            print 'mutation strategy 1.'
-            '''
-            Walking bit flips: 
-            the first and most rudimentary strategy employed by afl involves performing sequential, ordered bit flips. 
-            The stepover is always one bit; the number of bits flipped in a row varies from one to four. 
-            '''
-            temp = ""
-            for m in mutate_data:
-                flipped = ""
-                byte = extend_bit(bin(ord(m)))
-                flip_size = random.randrange(1, 5)
-                for f in range(flip_size):
-                    if int(byte[f+2]): flipped += str(0)
-                    else: flipped += str(1)
-                byte = byte[:2] + flipped + byte[2+flip_size:]
-                temp += chr(int(byte, 2))
-            
-            mutate_data = temp
+            # print 'mutation strategy 1.'
+            mutate_data = bit_flip(mutate_data)
 
         elif strategy == 2:
-            print 'mutation strategy 2.'                    # byte flipping    
-            '''
-            Walking byte flips: 
-            a natural extension of walking bit flip approach, 
-            this method relies on 8-bit wide bitflips with a constant stepover of one byte. 
-            '''
-            temp = ""
-            for m in mutate_data:
-                flipped = ""
-                byte = extend_bit(bin(ord(m)))
-                flip_size = 8
-                for f in range(flip_size):
-                    if int(byte[f+2]): flipped += str(0)
-                    else: flipped += str(1)
-                byte = byte[:2] + flipped + byte[2+flip_size:]
-                temp += chr(int(byte, 2))
-            
-            mutate_data = temp
+            # print 'mutation strategy 2.'                    # byte flipping    
+            mutate_data = byte_flip(mutate_data)
 
         elif strategy == 3:                          
-            print 'mutation strategy 3.'                    # arithmetic inc/dec
-            '''
-            Simple arithmetics: 
-            to trigger more complex conditions in a deterministic fashion, 
-            the third stage employed by afl attempts to subtly increment or decrement existing integer values in the input file; 
-            this is done with a stepover of one byte. The experimentally chosen range for the operation is -35 to +35; past these bounds, fuzzing yields drop dramatically. 
-            In particular, the popular option of sequentially trying every single value for each byte 
-            (equivalent to arithmetics in the range of -128 to +127) helps very little and is skipped by afl.
-            
-            When it comes to the implementation, the stage consists of three separate operations. 
-            First, the fuzzer attempts to perform subtraction and addition on individual bytes. 
-            With this out of the way, the second pass involves looking at 16-bit values, using both endians 
-            - but incrementing or decrementing them only if the operation would have also affected the most significant byte 
-            (otherwise, the operation would simply duplicate the results of the 8-bit pass). 
-            The final stage follows the same logic, but for 32-bit integers.
-            '''
-            operand = random.randrange(-35, 36)
-            # for m in mutation_data:
-            
-            pass
+            # print 'mutation strategy 3.'                    # arithmetic inc/dec
+            mutate_data = simple_arithmatic(mutate_data)
 
         elif strategy == 4:                          
-            print 'mutation strategy 4.'                    # interesting value
-            '''
-            Known integers: 
-            the last deterministic approach employed by afl relies on a hardcoded set of integers chosen for their demonstrably elevated likelihood of triggering edge conditions in typical code (e.g., -1, 256, 1024, MAX_INT-1, MAX_INT). 
-            The fuzzer uses a stepover of one byte to sequentially overwrite existing data in the input file with one of the approximately two dozen "interesting" values, using both endians (the writes are 8-, 16-, and 32-bit wide).
-            '''
+            # print 'mutation strategy 4.'                    # interesting value
+            ###
+            ### To be developed
+            ###
             pass
 
         elif strategy == 5:                          
-            print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
-            pass
+            # print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
+            temp = mutate_data[:offset_to_mutate]
+            # generate random block
+            for i in range(4):
+                temp += chr(random.randrange(0, 256))
+            temp += mutate_data[offset_to_mutate:]
+            mutate_data = temp
  
         elif strategy == 6:                          
             print 'mutation strategy 6.'                    # block deletion : 1 block = 16 bytes
-            pass
-
-        print mutate_data
+            temp = mutate_data[:offset_to_mutate-4]
+            temp += mutate_data[offset_to_mutate:]
+            mutate_data = temp
+            
         # more strategy
     
-
     fout.write(mutate_data)
 
     fin.close()
@@ -282,7 +420,7 @@ if __name__ == '__main__':
 
     minimizer_ = minimizer.TestcaseMinimizer(cmd.split(' '), afl_path, output_dir)
 
-    os.environ['ASAN_OPTIONS'] = 'abort_on_error=1:detect_leaks=0:symbolize=0:allocator_may_return_null=1'
+    os.environ['ASAN_OPTIONS'] = 'abort_on_error=1:detect_leaks=0:symbolize=1:allocator_may_return_null=1'
 
     while True:
         s = queue[random.randrange(0, len(queue))]
