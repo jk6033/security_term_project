@@ -433,7 +433,7 @@ if __name__ == '__main__':
 
     minimizer_ = minimizer.TestcaseMinimizer(cmd.split(' '), afl_path, output_dir)
 
-    os.environ['ASAN_OPTIONS'] = 'abort_on_error=1:detect_leaks=0:symbolize=1:allocator_may_return_null=1'
+    os.environ['ASAN_OPTIONS'] = 'abort_on_error=1:detect_leaks=0:symbolize=0:allocator_may_return_null=1'
 
     while True:
         s = queue[random.randrange(0, len(queue))]
