@@ -438,7 +438,7 @@ if __name__ == '__main__':
     while True:
         s = queue[random.randrange(0, len(queue))]
 
-        # print 'cur_input: ' + s
+        print 'cur_input: ' + s
 
         for i in range(100):           # mutate 100 times for a test case
 
