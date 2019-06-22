@@ -8,7 +8,7 @@ import time
 
 import minimizer
 
-afl_path = 'path to afl'
+afl_path = '/home/crybaby26/security_term_project/practice/afl-2.52b' # 'path to afl'
 
 prog_name = ''
 prog_args = ''
@@ -217,6 +217,7 @@ if __name__ == '__main__':
             mutate(s)
             
             cmd = prog_name + ' ' + prog_args
+            cmd = cmd.replace('@@', cur_file)
 
             # -1: crash, 1: interesting
             result = run(cmd, shell = True, timeout = 1)
