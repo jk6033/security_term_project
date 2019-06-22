@@ -310,7 +310,7 @@ def mutate(orig_file):
         strategy = random.randrange(0, 7)
 
         if strategy == 0:                                   # random byte mutation
-            # print 'mutation strategy 0.'
+            print 'mutation strategy 0.'
             temp = mutate_data[:offset_to_mutate]
         
             for i in range(rand_size):                      # mutate size 1-4
@@ -340,7 +340,7 @@ def mutate(orig_file):
             pass
 
         elif strategy == 5:                          
-            # print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
+            print 'mutation strategy 5.'                    # block insertion: 1 block = 16 bytes
             temp = mutate_data[:offset_to_mutate]
             # generate random block
             for i in range(4):
@@ -349,7 +349,7 @@ def mutate(orig_file):
             mutate_data = temp
             # pass
         elif strategy == 6:                          
-            # print 'mutation strategy 6.'                    # block deletion : 1 block = 16 bytes
+            print 'mutation strategy 6.'                    # block deletion : 1 block = 16 bytes
             temp = mutate_data[:offset_to_mutate-4]
             temp += mutate_data[offset_to_mutate:]
             mutate_data = temp
@@ -453,7 +453,7 @@ if __name__ == '__main__':
             if result == -1:
                 crash_handler()
                 remove_duplicate_crash()
-
+            
             if minimizer_.check_testcase(cur_file):
                 add_interesting(cur_file)
     
